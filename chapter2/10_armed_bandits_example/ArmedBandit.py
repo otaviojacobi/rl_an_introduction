@@ -3,7 +3,7 @@ import random
 
 class ArmedBandit:
     def __init__(self, k=10):
-        self.action_values = [np.random.normal(0, 1) for k in range(10)]
+        self.action_values = [np.random.normal(0, 1) for _ in range(k)]
     
     def get_reward(self, action):
         return np.random.normal(self.action_values[action], 1)
