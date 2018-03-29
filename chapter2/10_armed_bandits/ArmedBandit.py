@@ -17,18 +17,24 @@ class ArmedBanditRunner:
 
     def run(self):
         means = np.zeros(self.STEPS)
+        optimal = np.zeros(self.STEPS)
+
+        # Suggested algorithm on section 2.4
         for run in range(self.RUNS):
             Q = np.zeros(self.bandits)
-            reward_sums = np.zeros(self.bandits)
             taken = np.zeros(self.bandits)
             ab = ArmedBandit(self.bandits)
             for step in range(self.STEPS):
                 action = np.argmax(Q) if random.random() < 1 - self.episolon else random.randint(0,self.bandits-1)
                 r = ab.get_reward(action)
                 taken[action] += 1
-                reward_sums[action] += r
-                Q[action] = reward_sums[action]/taken[action]
-                means[step] += r
-        means = means/self.RUNS
+                Q[action] = Q[action] + (1.0/taken[action]) * (r - Q[action])
 
-        return means
+                #this is for plotting
+                means[step] += r
+                optimal[step] += 1 if np.argmax(ab.action_values) == action else 0
+
+        means = means/self.RUNS
+        optimal = optimal/self.RUNS
+
+        return means, optimal
